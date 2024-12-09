@@ -31,8 +31,8 @@ jobs:
           fi
 
       # Remove comments using sed
-      - name: Remove block comments
-        run: sed -i '/\/\*/,/\*\//d' miniaudio.h
+      # - name: Remove block comments
+      # run: sed -i '/\/\*/,/\*\//d' miniaudio.h
       
       # Run unifdef
       - name: Run unifdef
