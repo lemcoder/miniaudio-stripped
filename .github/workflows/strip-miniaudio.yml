@@ -29,16 +29,31 @@ jobs:
             echo "Error: miniaudio.h does not exist or is empty"
             exit 1
           fi
-
-      # Remove comments using sed
-      # - name: Remove block comments
-      # run: sed -i '/\/\*/,/\*\//d' miniaudio.h
       
       # Run unifdef
       - name: Run unifdef
         run: |
-          unifdef -DMA_NO_ENGINE miniaudio.h > ma_stripped.h
-          mv ma_stripped.h miniaudio.h
+          unifdef \
+              -DMA_ENABLE_ONLY_SPECIFIC_BACKENDS \
+              -DMA_ENABLE_WASAPI -DMA_ENABLE_DSOUND -DMA_ENABLE_WINMM \
+              -DMA_ENABLE_ALSA -DMA_ENABLE_COREAUDIO \
+              -DMA_ENABLE_AAUDIO -DMA_ENABLE_OPENSL \
+              -DMA_ENABLE_WEBAUDIO \
+              -DMA_NO_DECODING -DMA_NO_ENCODING \
+              -DMA_NO_WAV -DMA_NO_FLAC -DMA_NO_MP3 \
+              -DMA_NO_ENGINE -DMA_NO_THREADING -DMA_NO_RESOURCE_MANAGER \
+              -DMA_NO_NODE_GRAPH -DMA_NO_GENERATION \
+              miniaudio.h > miniaudio_processed.h
+              if [ $? -eq 2 ]; then
+                echo "Error: unifdef encountered a problem"
+                exit 2
+              fi
+              mv miniaudio_processed.h miniaudio.h
+              # Remove comments using sed
+
+      # Remove block comments
+      - name: Remove block comments
+        run: sed -i '/\/\*/,/\*\//d' miniaudio.h
 
       # Commit and push changes
       - name: Commit and push changes
