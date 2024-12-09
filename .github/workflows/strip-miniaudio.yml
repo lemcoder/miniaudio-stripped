@@ -32,6 +32,7 @@ jobs:
       
       # Run unifdef
       - name: Run unifdef
+        continue-on-error: true # unifdef returns 1 if content changed
         run: |
           unifdef \
               -DMA_ENABLE_ONLY_SPECIFIC_BACKENDS \
@@ -49,7 +50,6 @@ jobs:
                 exit 2
               fi
               mv miniaudio_processed.h miniaudio.h
-              # Remove comments using sed
 
       # Remove block comments
       - name: Remove block comments
