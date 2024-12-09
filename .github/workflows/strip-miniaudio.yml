@@ -21,7 +21,15 @@ jobs:
       # Download miniaudio.h
       - name: Download miniaudio.h
         run: curl -o miniaudio.h https://raw.githubusercontent.com/mackron/miniaudio/master/miniaudio.h
-
+      
+      # Verify that miniaudio.h exists and is not empty
+      - name: Verify miniaudio.h exists
+        run: |
+          if [ ! -s miniaudio.h ]; then
+            echo "Error: miniaudio.h does not exist or is empty"
+            exit 1
+          fi
+      
       # Run unifdef
       - name: Run unifdef
         run: |
