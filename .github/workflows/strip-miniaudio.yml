@@ -29,6 +29,10 @@ jobs:
             echo "Error: miniaudio.h does not exist or is empty"
             exit 1
           fi
+
+      # Remove comments using sed
+      - name: Remove block comments
+        run: sed -i '/\/\*/,/\*\//d' miniaudio.h
       
       # Run unifdef
       - name: Run unifdef
@@ -43,11 +47,7 @@ jobs:
           -DMA_NO_WAV -DMA_NO_FLAC -DMA_NO_MP3 \
           -DMA_NO_ENGINE -DMA_NO_THREADING -DMA_NO_RESOURCE_MANAGER \
           -DMA_NO_NODE_GRAPH -DMA_NO_GENERATION \
-          miniaudio.h
-
-      # Remove comments using sed
-      - name: Remove block comments
-        run: sed -i '/\/\*/,/\*\//d' miniaudio.h
+          miniaudio.h > ma_stripped.h
 
       # Commit and push changes
       - name: Commit and push changes
