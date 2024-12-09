@@ -1,0 +1,47 @@
+name: Strip and Update miniaudio.h
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs daily at midnight
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  process-miniaudio:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Download miniaudio.h
+      - name: Download miniaudio.h
+        run: curl -o miniaudio.h https://raw.githubusercontent.com/mackron/miniaudio/master/miniaudio.h
+
+      # Run unifdef
+      - name: Run unifdef
+        run: |
+          unifdef \
+            -DMA_ENABLE_ONLY_SPECIFIC_BACKENDS \
+            -DMA_ENABLE_AAUDIO -DMA_ENABLE_OPENSL \
+            -DMA_NO_DECODING -DMA_NO_ENCODING \
+            -DMA_NO_WAV -DMA_NO_FLAC -DMA_NO_MP3 \
+            -DMA_NO_ENGINE -DMA_NO_THREADING -DMA_NO_RESOURCE_MANAGER \
+            -DMA_NO_NODE_GRAPH -DMA_NO_GENERATION \
+            miniaudio.h > miniaudio_processed.h
+          mv miniaudio_processed.h miniaudio.h
+
+      # Remove comments using sed
+      - name: Remove block comments
+        run: sed -i '/\/\*/,/\*\//d' miniaudio.h
+
+      # Commit and push changes
+      - name: Commit and push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add miniaudio.h
+          git commit -m "Update stripped miniaudio.h" || echo "No changes to commit"
+          git push origin main
