@@ -41,7 +41,6 @@ jobs:
             -DMA_NO_ENGINE -DMA_NO_THREADING -DMA_NO_RESOURCE_MANAGER \
             -DMA_NO_NODE_GRAPH -DMA_NO_GENERATION \
             miniaudio.h > miniaudio_processed.h
-          mv miniaudio_processed.h miniaudio.h
 
       # Remove comments using sed
       - name: Remove block comments
