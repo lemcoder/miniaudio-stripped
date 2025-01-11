@@ -51,10 +51,21 @@ jobs:
               fi
               mv miniaudio_processed.h miniaudio.h
 
-    #  # Remove block comments
-    #  - name: Remove block comments
-    #    run: sed -i '/\/\*/,/\*\//d' miniaudio.h
+      # Install GCC
+      - name: Install GCC
+        run: sudo apt-get update && sudo apt-get install -y gcc
 
+      # Strip comments
+      - name: Strip Comments from C File
+        run: |
+          # Set input and output file paths
+          INPUT_FILE="miniaudio.h"
+          OUTPUT_FILE="miniaudio_processed.h"
+        
+          # Strip comments using GCC
+          gcc -fpreprocessed -dD -E "$INPUT_FILE" -o "$OUTPUT_FILE"
+          mv miniaudio_processed.h miniaudio.h
+      
       # Commit and push changes
       - name: Commit and push changes
         env:
