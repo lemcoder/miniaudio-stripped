@@ -51,9 +51,9 @@ jobs:
 #              fi
 #              mv miniaudio_processed.h miniaudio.h
 #
-      # Remove block comments
-      - name: Remove block comments
-        run: sed -i '/\/\*/,/\*\//d' miniaudio.h
+#      # Remove block comments
+#      - name: Remove block comments
+#        run: sed -i '/\/\*/,/\*\//d' miniaudio.h
 
       # Commit and push changes
       - name: Commit and push changes
